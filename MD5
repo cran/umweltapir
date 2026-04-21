@@ -1,0 +1,13 @@
+82779b7f26c2fe09868f339449db045e *DESCRIPTION
+214fce6470ab9f58bc553bdea303e192 *LICENSE
+0039b3902bba892af509c1c6ff7d92fb *NAMESPACE
+7ec423841dc7df8d8873a6aa1e5b59a9 *NEWS.md
+f7817765515ab41712ae0f4cd5434b7b *R/download_resources.R
+7e76a429a7d6dda8b0f183fce9e09d48 *R/fetch_api.R
+df6cc46bc7fae1a55b713f3d5065b35a *R/umweltapir-package.R
+6ee2d9728c8b194840255a15cead5482 *README.md
+b07e342e4d0f457d4a7df43fd739ae00 *man/download_resources.Rd
+8d36afa17d3d4a5b17e821a958e96b3a *man/fetch_data.Rd
+ee71ee6e9a9211ea92ef27101bc335ee *man/umweltapir-package.Rd
+fdf8ee391074eb9b7407a84d4d0f24d9 *tests/testthat.R
+e205f8dea1cfac5f3468aa12664c801e *tests/testthat/test-fetch_api.R
