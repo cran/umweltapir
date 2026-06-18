@@ -12,10 +12,13 @@
 #'   Default value: type.
 #' @param language A string to determine the language of the search results.
 #'   Possible values: de and en. Default: de (German).
-#' @param columns Either a vector of strings containing the selected columns or "resource_only" as a shortcut to select the columns "source", "id", "resources", "title" and "quality"
+#' @param columns Either a vector of strings containing the selected columns or "resource_only" as a shortcut to select the columns "source", "id", "resources", "title" and "quality".
+#'   Possible values: source, id, title, description, types, comment, license, mandatory_registration,
+#'   organisations, persons, tags, regions, issued, modified, update_frequency, source_url, source_url_explainer, source_url_type,
+#'   machine_readable_source, alternatives, resources, language, bounding_boxes, time_ranges, global_identifier, quality, status, last_harvest, resource_only
 #'
-#' @returns A dataframe containing the dataset entries. Returns an empty
-#'   dataframe if no results are found.
+#' @returns A tibble containing the dataset entries. Returns an empty
+#'   tibble if no results are found.
 #'
 #' @name fetch_data
 #' @examples
@@ -30,7 +33,7 @@
 #' # If you want to know which facet values exist for a certain facet, you can use
 #' # fetch_facet_values (see example 5).
 #' if (interactive()) {
-#'   result_list <- fetch_by_query("(Ozon) AND organisation:/Land/Bayern/open.bydata")
+#'   result_list <- fetch_by_query("organisation:/Land/Bayern/open.bydata AND Ozon AND license:/Offen")
 #' }
 #'
 #' # Example 3: Select subset of columns and unnest columns (here the column "resources" is unnested
@@ -56,8 +59,8 @@
 #'   "metaver-hb/7F0A29F5-ECBC-476D-9C99-DC1A6A8043D0"
 #' )
 #' datasets <- fetch_by_ids(ids)
-#' for (dataset in datasets) {
-#'   print(dataset$title)
+#' for (i in 1:dim(datasets)[1]) {
+#'   print(datasets[i,]$title)
 #' }
 #'
 #' # Example 5: Fetching all possible values for the facet name organisation. This can be e.g. useful
@@ -67,7 +70,7 @@
 #' organisations <- fetch_facet_values(name)
 #' head(organisations)
 #'
-#' # Example 7: Fetch multiple facets at the same time
+#' # Example 6: Fetch multiple facets at the same time
 #' # If you want to fetch more than one facet, the easiest way is to use fetch_by_query() for this.
 #' if (interactive()) {result_list  <- fetch_by_query(
 #'  query =
@@ -81,16 +84,25 @@ fetch_by_query <- function(query, language = "de", columns = NULL) {
   if (!language %in% c("de", "en")) {
     stop("Language must either be \"de\" or \"en\".")
   }
-  httr2::request("https://md.umwelt.info/search/all") |>
-    httr2::req_url_query(query = query, language = language) |>
-    .perform_and_parse(columns = columns)
+  req <- httr2::request("https://md.umwelt.info/search/all?format=arrow_ipc") |>
+    httr2::req_url_query(query = query, language = language)
+
+  req <- .get_column_req(.check_columns(columns), req)
+
+  req$url |>
+    arrow::read_ipc_stream()
 }
 
 #' @rdname fetch_data
 #' @export
 fetch_by_url <- function(url, columns = NULL) {
-  httr2::request(url) |>
-    .perform_and_parse(columns = columns)
+  req <- httr2::request(url) |>
+    httr2::req_url_query(format = "arrow_ipc")
+
+  req <- .get_column_req(.check_columns(columns), req)
+
+  req$url |>
+    arrow::read_ipc_stream()
 }
 
 #' @rdname fetch_data
@@ -106,12 +118,15 @@ fetch_by_ids <- function(ids) {
       httr2::req_error(is_error = \(subset) FALSE) |>
       httr2::req_perform() |>
       httr2::resp_body_string()
+
     page <- jsonlite::stream_in(textConnection(subset), verbose = FALSE)
+
     dataset_list[[i]] <- page
     i <- i + 1
   }
 
-  dataset_list
+  dataset_tb <- tibble::as_tibble(dplyr::bind_rows(dataset_list))
+  dataset_tb
 }
 
 #' @rdname fetch_data
@@ -129,35 +144,49 @@ fetch_facet_values <- function(name = "type") {
   jsonlite::fromJSON(value_list)
 }
 
-
-#' Internal helper to execute request and parse JSON stream
+#' Internal helper to get valid columns
 #' @noRd
-.perform_and_parse <- function(req, columns) {
-  resp <- req |>
-    httr2::req_headers(Accept = "application/json") |>
-    httr2::req_error(is_error = \(resp) FALSE) |>
-    httr2::req_perform_connection()
+.get_valid_cols <- function() {
+  schema <- httr2::request("https://md.umwelt.info/openapi.json") |>
+    httr2::req_perform() |>
+    httr2::resp_body_string() |>
+    jsonlite::fromJSON()
+  valid_cols <- schema$components$schemas$Column$enum
+  valid_cols
+}
 
-  pages <- list()
-  page_number <- 1
-  page_size <- 10000
 
-  while (!httr2::resp_stream_is_complete(resp)) {
-    lines <- httr2::resp_stream_lines(resp, page_size)
-
-    page <- jsonlite::stream_in(textConnection(lines), pagesize = page_size, verbose = FALSE)
-
-    pages[[page_number]] <- page
-    page_number <- page_number + 1
-  }
-  df <- jsonlite::rbind_pages(pages)
-
-  if (identical(columns, "resource_only")) {
+#' Internal helper to check column names
+#' @noRd
+.check_columns <- function(columns) {
+  if (length(columns) == 1 && columns == "resource_only") {
     columns <- c("source", "id", "resources", "title", "quality")
   }
-  if (!is.null(columns)) {
-    df <- df[, intersect(columns, names(df)), drop = FALSE]
+
+  valid_cols <- .get_valid_cols()
+
+  if (!all(columns %in% valid_cols)) { # results in true even if columns = NULL
+    invalid <- setdiff(columns, valid_cols)
+    stop(
+      "Invalid column(s): ", paste(invalid, collapse = ", "), ".\n",
+      "Columns must be one or several of: ", paste(valid_cols, collapse = ", "),
+      call. = FALSE
+    )
   }
 
-  df
+  columns
+}
+
+#' Internal helper to process column names
+#' @noRd
+.get_column_req <- function(columns, req) {
+  if (!is.null(columns)) {
+    # Create a named list where every element is named "columns"
+    query_list <- stats::setNames(as.list(columns), rep("columns", length(columns)))
+
+    # Use !!! to splice the list into req_url_query
+    req <- req |> httr2::req_url_query(!!!query_list)
+  } else {
+    req
+  }
 }

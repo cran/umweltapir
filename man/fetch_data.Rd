@@ -22,7 +22,10 @@ fetch_facet_values(name = "type")
 \item{language}{A string to determine the language of the search results.
 Possible values: de and en. Default: de (German).}
 
-\item{columns}{Either a vector of strings containing the selected columns or "resource_only" as a shortcut to select the columns "source", "id", "resources", "title" and "quality"}
+\item{columns}{Either a vector of strings containing the selected columns or "resource_only" as a shortcut to select the columns "source", "id", "resources", "title" and "quality".
+Possible values: source, id, title, description, types, comment, license, mandatory_registration,
+organisations, persons, tags, regions, issued, modified, update_frequency, source_url, source_url_explainer, source_url_type,
+machine_readable_source, alternatives, resources, language, bounding_boxes, time_ranges, global_identifier, quality, status, last_harvest, resource_only}
 
 \item{url}{A character string containing the full API request URL.}
 
@@ -34,8 +37,8 @@ Possible values: type, topic, organisation, license, language and resource_type.
 Default value: type.}
 }
 \value{
-A dataframe containing the dataset entries. Returns an empty
-dataframe if no results are found.
+A tibble containing the dataset entries. Returns an empty
+tibble if no results are found.
 }
 \description{
 These functions allow you to retrieve datasets from the umwelt.info metadata
@@ -53,7 +56,7 @@ if (interactive()) {
 # If you want to know which facet values exist for a certain facet, you can use
 # fetch_facet_values (see example 5).
 if (interactive()) {
-  result_list <- fetch_by_query("(Ozon) AND organisation:/Land/Bayern/open.bydata")
+  result_list <- fetch_by_query("organisation:/Land/Bayern/open.bydata AND Ozon AND license:/Offen")
 }
 
 # Example 3: Select subset of columns and unnest columns (here the column "resources" is unnested
@@ -79,8 +82,8 @@ ids <- c(
   "metaver-hb/7F0A29F5-ECBC-476D-9C99-DC1A6A8043D0"
 )
 datasets <- fetch_by_ids(ids)
-for (dataset in datasets) {
-  print(dataset$title)
+for (i in 1:dim(datasets)[1]) {
+  print(datasets[i,]$title)
 }
 
 # Example 5: Fetching all possible values for the facet name organisation. This can be e.g. useful
@@ -90,7 +93,7 @@ name <- "organisation"
 organisations <- fetch_facet_values(name)
 head(organisations)
 
-# Example 7: Fetch multiple facets at the same time
+# Example 6: Fetch multiple facets at the same time
 # If you want to fetch more than one facet, the easiest way is to use fetch_by_query() for this.
 if (interactive()) {result_list  <- fetch_by_query(
  query =

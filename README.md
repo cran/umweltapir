@@ -23,7 +23,13 @@ details.
 
 ## Installation
 
-You can install the development version of umweltapir from
+The umweltapir package can be installed from CRAN using:
+
+``` r
+install.packages("umweltapir")
+```
+
+You can also install the development version of umweltapir from
 [GitLab](https://about.gitlab.com/) with:
 
 ``` r
@@ -53,7 +59,7 @@ Example 2: Fetching by query string For background how to build a query
 see <https://md.umwelt.info/swagger-ui/#/search/text_search>
 
 ``` r
-result_list <- fetch_by_query("organisation:/Land/Bayern/open.bydata AND Ozon AND license:/offen")
+result_list <- fetch_by_query("organisation:/Land/Bayern/open.bydata AND Ozon AND license:/Offen")
 ```
 
 Example 3: Select subset of columns and unnest columns (here the column
@@ -84,8 +90,8 @@ ids <- c(
   "metaver-hb/7F0A29F5-ECBC-476D-9C99-DC1A6A8043D0"
 )
 datasets <- fetch_by_ids(ids)
-for (dataset in datasets) {
-  print(dataset$title)
+for (i in 1:dim(datasets)[1]) {
+  print(datasets[i,]$title)
 }
 ```
 
@@ -108,9 +114,9 @@ The input link for the query can be generated in the interface of
 [tutorial](https://umwelt.info/artikel/so-laden-sie-daten-bei-umweltinfo-mit-python-und-r-herunter)
 for further details. In a second step the required columns are unnested
 and you can optionally filter for certain file formats (in the example
-here “Microsoft Excel Spreadsheet” and “CSV”) and create a subset of
-only those entries where the resource description contains the query (in
-this example “Ozon”). Note that the unnesting is a prerequisite for
+here “MicrosoftExcelSpreadsheet” and “Csv”) and create a subset of only
+those entries where the resource description contains the query (in this
+example “Ozon”). Note that the unnesting is a prerequisite for
 preview_resources() and download_resources(). Third, you create a
 preview of the resulting resources which would be downloaded.
 
@@ -119,7 +125,7 @@ results <- fetch_by_url(
   "https://md.umwelt.info/search/all?query=(Ozon)+AND+organisation%3A%2FLand%2FBayern%2Fopen.bydata",
   columns = "resource_only"
 ) |>
-  unnest_and_filter(formats = c("Microsoft Excel Spreadsheet", "CSV"), description_regex = "Ozon") |>
+  unnest_and_filter(formats = c("MicrosoftExcelSpreadsheet", "Csv"), description_regex = "Ozon") |>
   preview_resources()
 ```
 

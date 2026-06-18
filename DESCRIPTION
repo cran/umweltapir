@@ -1,6 +1,6 @@
 Package: umweltapir
-Title: Access Umwelt.Info API
-Version: 0.1.0
+Title: Access 'umwelt.info' API
+Version: 0.2.0
 Encoding: UTF-8
 Authors@R: 
     c(person(given = "Johannes", family = "Vogel", email = "johannes.vogel@uba.de", role = c("aut", "cre")),
@@ -17,17 +17,17 @@ URL:
         https://gitlab.opencode.de/umwelt-info/packages/-/tree/main/umweltapir?ref_type=heads
 BugReports: https://gitlab.opencode.de/umwelt-info/packages/-/work_items
 License: MIT + file LICENSE | Apache License 2.0
-RoxygenNote: 7.3.3
-Imports: httr2, jsonlite, tidyr
-Suggests: testthat (>= 3.0.0), dplyr
+RoxygenNote: 8.0.0
+Depends: R (>= 4.1.0)
+Imports: arrow, dplyr, httr2, jsonlite, purrr, rlang, tibble, tidyr
+Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2026-04-20 14:24:42 UTC; ubuntu
+Packaged: 2026-06-18 11:22:23 UTC; ubuntu
 Author: Johannes Vogel [aut, cre],
   Maximilian Berthold [aut],
   Luise Quoß [ctb],
   Nationales Zentrum für Umwelt- und Naturschutzinformationen [cph]
 Maintainer: Johannes Vogel <johannes.vogel@uba.de>
-Depends: R (>= 4.1.0)
 Repository: CRAN
-Date/Publication: 2026-04-21 20:20:02 UTC
+Date/Publication: 2026-06-18 11:40:02 UTC

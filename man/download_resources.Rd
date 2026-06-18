@@ -8,8 +8,8 @@
 \usage{
 unnest_and_filter(
   data,
-  formats = c("CSV", "ZIP", "JSON", "JSON-LD", "GeoJSON", "TSV", "PDF",
-    "Microsoft Excel Spreadsheet"),
+  formats = c("Csv", "Zip", "Json", "JsonLd", "GeoJson", "Tsv", "Pdf",
+    "MicrosoftExcelSpreadsheet"),
   description_regex = NULL
 )
 
@@ -21,7 +21,7 @@ download_resources(data_preprocessed, base_dir = tempdir())
 \item{data}{An unnested and optionally filtered R dataframe which is written as output by one of the functions fetch_by_url, fetch_by_query or fetch_by_id}
 
 \item{formats}{A list of strings indicating accepted output formats of the recoures
-Possible values: run 'fetch_facet_values("resource_type")' to get a list of existing formats}
+Possible values: see ResourceType in the list of Schemas at the bottom of the API documentation at    https://md.umwelt.info/swagger-ui/ to get a list of existing formats}
 
 \item{description_regex}{A string to filter only resources with a description containing the string}
 
@@ -43,8 +43,8 @@ Download all the resources attached to the datasets of a respective query:
 # https://umwelt.info/artikel/so-laden-sie-daten-bei-umweltinfo-mit-python-und-r-herunter
 # for further details.
 # In a second step the required columns are unnested and you can optionally filter for certain
-# file formats (in the example here "CSV" and "ZIP") and create a subset of only those entries
-# where the resource description contains the query (in this example "Ozon").
+# file formats (in the example here "MicrosoftExcelSpreadsheet" and "Csv") and create a subset of
+# only those entries where the resource description contains the query (in this example "Ozon").
 # Note that the unnesting is a prerequisite for preview_resources() and download_resources().
 # Third, you create a preview of the resulting resources which would be downloaded.
 # If you want to proceed, you can initiate the download in the fourth and final step.
@@ -54,7 +54,8 @@ if (interactive()) {
   results <- fetch_by_url(url,
     columns = "resource_only"
   ) |>
-    unnest_and_filter(formats =  c("Microsoft Excel Spreadsheet"), description_regex = "Ozon") |>
+    unnest_and_filter(formats =  c("MicrosoftExcelSpreadsheet", "Csv"),
+    description_regex = "Ozon") |>
     preview_resources()
   results |> download_resources(base_dir = tempdir())
 }

@@ -4,7 +4,7 @@
 \name{umweltapir-package}
 \alias{umweltapir}
 \alias{umweltapir-package}
-\title{umweltapir: Access Umwelt.Info API}
+\title{umweltapir: Access 'umwelt.info' API}
 \description{
 Provides an R-based access to the datasets including their resources from the portal \url{https://umwelt.info}. The package allows for an easy integration of those datasets into your R-based workflows. The functionality of the package mirrors the web-based access as provided at \url{https://umwelt.info}. You can use the same queries and get the same datasets by accessing our API.
 }
@@ -21,6 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Johannes Vogel \email{johannes.vogel@uba.de}
   \item Maximilian Berthold \email{maximilian.berthold@uba.de}
 }
 
