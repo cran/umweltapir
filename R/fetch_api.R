@@ -96,6 +96,7 @@ fetch_by_query <- function(query, language = "de", columns = NULL) {
 #' @rdname fetch_data
 #' @export
 fetch_by_url <- function(url, columns = NULL) {
+  url <- enc2utf8(url)
   req <- httr2::request(url) |>
     httr2::req_url_query(format = "arrow_ipc")
 
@@ -119,7 +120,7 @@ fetch_by_ids <- function(ids) {
       httr2::req_perform() |>
       httr2::resp_body_string()
 
-    page <- jsonlite::stream_in(textConnection(subset), verbose = FALSE)
+    page <- jsonlite::stream_in(textConnection(subset, encoding = "UTF-8"), verbose = FALSE)
 
     dataset_list[[i]] <- page
     i <- i + 1

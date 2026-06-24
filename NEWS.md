@@ -1,3 +1,7 @@
+# umweltapir 0.2.1
+
+* Operating systems which do not use UTF-8 as default lead to errors in the fetch functions, so the functions were changed to ensure correct encoding.
+
 # umweltapir 0.2.0
 
 ## Breaking changes

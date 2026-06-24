@@ -1,9 +1,9 @@
-2e613ed648070c0842a8f292bc3b68d7 *DESCRIPTION
+e730cdf88f7d7a5214e00e0301296507 *DESCRIPTION
 214fce6470ab9f58bc553bdea303e192 *LICENSE
 dab9601b9f776e364cfc70b0f421a422 *NAMESPACE
-b984effcd59c7ec5e58fe44c156e2d83 *NEWS.md
+e0d24e6a898b3540d689b35ed8c8fe09 *NEWS.md
 e35eb4bc9985e7209df372b3b4b8bc02 *R/download_resources.R
-66c07855590640d4523a4119d3f9daee *R/fetch_api.R
+f16d42c998e8298ea03dfd2e62f2811b *R/fetch_api.R
 df6cc46bc7fae1a55b713f3d5065b35a *R/umweltapir-package.R
 2a9fc409642e4dcb73299fb33eba04ac *README.md
 01adfcc95423d896827e71bae710dae8 *man/download_resources.Rd
